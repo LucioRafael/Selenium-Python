@@ -15,44 +15,54 @@ def scrape_pagina2(formato='tabla'):
     # Iniciar el navegador Edge con las opciones configuradas
     driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=opts)
 
-    # Navegar a la página web
-    driver.get('https://www.retrostic.com/es/roms')
+    try:
+        # Navegar a la página web
+        driver.get('https://www.retrostic.com/es/roms')
 
-    # Esperar unos segundos para que la página cargue completamente
-    sleep(3)
+        # Esperar unos segundos para que la página cargue completamente
+        sleep(3)
 
-    # Extraer la tabla de juegos
-    tabla_juegos = driver.find_element(By.CLASS_NAME, 'table-hover')
-    filas = tabla_juegos.find_elements(By.TAG_NAME, 'tr')
-    
-    # Extraer encabezados
-    encabezados = [th.text for th in filas[0].find_elements(By.TAG_NAME, 'th')]
+        # Extraer la tabla de juegos
+        tabla_juegos = driver.find_element(By.CLASS_NAME, 'table-hover')
+        filas = tabla_juegos.find_elements(By.TAG_NAME, 'tr')
+        
+        # Extraer encabezados
+        encabezados = [th.text for th in filas[0].find_elements(By.TAG_NAME, 'th')]
 
-    # Extraer filas de datos
-    datos = []
-    imagen_counter = 1
-    for fila in filas[1:]:
-        columnas = fila.find_elements(By.TAG_NAME, 'td')
-        fila_datos = [columna.text for columna in columnas]
-        # Si hay una columna de imagen vacía, agregar "Imagen X"
-        if len(fila_datos) < len(encabezados):
-            fila_datos.append(f'Imagen {imagen_counter}')
-            imagen_counter += 1
-        datos.append(fila_datos)
+        # Extraer filas de datos
+        datos = []
+        for fila in filas[1:]:
+            columnas = fila.find_elements(By.TAG_NAME, 'td')
+            fila_datos = [columna.text for columna in columnas]
+            datos.append(fila_datos)
 
-    # Cerrar el navegador
-    driver.quit()
+        # Depuración: imprimir filas y datos extraídos
+        print("Encabezados:", encabezados)
+        for dato in datos:
+            print("Fila de datos:", dato)
+
+    except Exception as e:
+        print("Error durante el scraping:", e)
+    finally:
+        # Cerrar el navegador
+        driver.quit()
 
     # Formatear los datos
     if formato == 'tabla':
         df = pd.DataFrame(datos, columns=encabezados)
         return df
     elif formato == 'lista':
-        return datos
+        # Filtrar los nombres de los juegos y agregar la enumeración
+        lista_datos = []
+        for i, fila_datos in enumerate(datos, start=1):
+            nombre = fila_datos[1] if len(fila_datos) > 1 else "N/A"  # El campo "Nombre" es el segundo en la fila
+            lista_datos.append({'Número': i, 'Nombre': nombre})
+        return lista_datos
     else:
         raise ValueError("Formato no soportado: elija 'tabla' o 'lista'")
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    resultado = scrape_pagina2('tabla')
-    print(resultado)
+    resultado = scrape_pagina2('lista')
+    for item in resultado:
+        print(item)

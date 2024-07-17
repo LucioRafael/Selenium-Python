@@ -1,0 +1,47 @@
+{
+  "url": "https://www.retrostic.com/es/roms",
+  "actions": [
+    {
+      "type": "click",
+      "selector": {
+        "id": "",
+        "class": "",
+        "placeholder": "",
+        "aria-label": "",
+        "name": ""
+      }
+    },
+    {
+      "type": "input",
+      "selector": {
+        "id": "",
+        "class": "form-control form-control-sm mr-sm-2 mb-0",
+        "placeholder": "Buscar",
+        "aria-label": "",
+        "name": "search_term_string"
+      },
+      "value": "Minecraft"
+    },
+    {
+      "type": "extract",
+      "selector": {
+        "id": "",
+        "class": "",
+        "placeholder": "",
+        "aria-label": "",
+        "name": ""
+      },
+      "attribute": "text"
+    },
+    {
+      "type": "submit_form",
+      "selector": {
+        "id": "",
+        "class": "",
+        "placeholder": "",
+        "aria-label": "",
+        "name": ""
+      }
+    }
+  ]
+}
